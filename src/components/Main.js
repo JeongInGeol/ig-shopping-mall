@@ -10,6 +10,8 @@ function Main() {
     const [username, setUsername] = useState(''); // 사용자 이름 상태 추가
     const [rememberMe, setRememberMe] = useState(false); // ID 기억하기 상태 추가
     const navigate = useNavigate();
+    const naverClientId = "s9YZslSWIEMoe2lX0QN3"; // 네이버 API 클라이언트 ID
+    const naverRedirectUri = "http://localhost:8080/api/auth/login/oauth2/code/naver"; // 백엔드 callback URI
 
     // 컴포넌트가 마운트될 때 로컬 스토리지에서 ID를 로드합니다.
     useEffect(() => {
@@ -24,24 +26,19 @@ function Main() {
         event.preventDefault();
 
         try {
-            // 로그인 요청
             const response = await axios.post('/api/users/login', {
-                email: id, // ID를 email로 매핑
+                email: id,
                 password: password
             });
 
-            // 성공적으로 로그인한 경우
-            console.log('Login successful:', response.data);
-            setUsername(response.data.username); // 사용자 이름 저장
+            setUsername(response.data.username);
 
-            // ID 기억하기 처리
             if (rememberMe) {
-                localStorage.setItem('savedId', id); // ID 저장
+                localStorage.setItem('savedId', id);
             } else {
-                localStorage.removeItem('savedId'); // 체크 해제 시 ID 삭제
+                localStorage.removeItem('savedId');
             }
 
-            // 필요한 경우 다른 페이지로 이동
             navigate('/'); // 메인 페이지로 이동
         } catch (error) {
             console.error('Login failed:', error);
@@ -49,23 +46,29 @@ function Main() {
         }
     };
 
+    // 네이버 로그인 버튼 클릭 핸들러
+    const handleNaverLogin = async () => {
+        const clientId = naverClientId;
+        const redirectUri = encodeURIComponent(naverRedirectUri); // 백엔드 서버에서 이 리디렉션 URI로 콜백 처리
+        const naverLoginUrl = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=STATE_STRING`;
+
+        window.location.href = naverLoginUrl;
+    };
+
     return (
         <div className="container">
-            {/* 검색 UI */}
             <div className="search-bar">
                 <input type="text" placeholder="Search..." />
                 <button>Search</button>
             </div>
 
             <div className="main-content">
-                {/* 내비게이터 */}
                 <div className="navigator">
                     <button onClick={() => navigate('/category/category1')}>Category 1</button>
                     <button onClick={() => navigate('/category/category2')}>Category 2</button>
                     <button onClick={() => navigate('/category/category3')}>Category 3</button>
                 </div>
 
-                {/* 로그인 div UI 시작 */}
                 <div className="login-section">
                     <h3>{username ? `${username}님 환영합니다!` : 'Login'}</h3>
                     {!username && (
@@ -96,18 +99,20 @@ function Main() {
                                 />
                                 <label className="custom-label">ID 기억하기</label>
                             </div>
-                            <button type="submit">Login</button>
-                            <button type="button" onClick={() => navigate('/signup')}>Sign Up</button>
+                            <button type="submit">로그인</button>
+                            <button type="button" onClick={() => navigate('/signup')}>회원 가입</button>
                         </form>
                     )}
+
+                    {/* 네이버 로그인 버튼 */}
+                    <button onClick={handleNaverLogin} className="naver-login-btn">
+                        네이버 로그인
+                    </button>
                 </div>
-                {/* 로그인 div UI 끝 */}
             </div>
 
-            {/* 상품 목록 영역 */}
             <div className="product-list">
                 <h2>Product List</h2>
-                {/* 여기에 상품 카드나 리스트를 추가할 수 있습니다. */}
                 <div className="product-item">상품 1</div>
                 <div className="product-item">상품 2</div>
                 <div className="product-item">상품 3</div>
