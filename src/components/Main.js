@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './Main.css';
+import '../styles/Main.css';
 
 function Main() {
     const [id, setId] = useState('');

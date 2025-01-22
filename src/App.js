@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Routes, useLocation, Link } from 'react
 import Main from './components/Main';
 import Signup from './components/Signup';
 import Category1 from './components/category/Category1'; // Category1 컴포넌트
-import './App.css';
+import './styles/App.css';
 
 function App() {
   const location = useLocation(); // 현재 경로를 가져옴
